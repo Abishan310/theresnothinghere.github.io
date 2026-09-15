@@ -8,7 +8,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Password Cracker</title>
+    <title>Word Guesser by abishan yes r</title>
 
 
     <style>
@@ -458,7 +458,7 @@
 
         <div class="description">
 
-            Enter the correct password to gain access.
+            Enter the correct word to unlock ts
 
         </div>
 
@@ -466,7 +466,7 @@
         <input
             id="guess"
             type="text"
-            placeholder="Enter password..."
+            placeholder="Enter word...."
             autocomplete="off"
         >
 
@@ -517,7 +517,7 @@
 
         <div class="footer">
 
-            <span>SECURE TERMINAL</span>
+            <span>idk what to put here ok</span>
 
             <span>v1.0.0</span>
 
@@ -666,7 +666,7 @@
 
 
             message.textContent =
-                "SYSTEM LOCKED — PLEASE WAIT";
+                "LOCKED — PLEASE WAIT";
 
             message.className = "error";
 
@@ -817,7 +817,7 @@
             if (attempts <= 0) {
 
                 message.textContent =
-                    "✕ ACCESS DENIED —  LOCKED";
+                    "✕ ACCESS DENIED —  Wrong guess :<";
 
                 message.className = "error";
 
@@ -854,7 +854,7 @@
             ) {
 
                 message.textContent =
-                    "Password is shorter than that.";
+                    "The word is is shorter than that.";
 
                 message.className = "hint";
 
@@ -863,7 +863,7 @@
             else {
 
                 message.textContent =
-                    "Wrong password. Same length.";
+                    "Wrong words. Same length.";
 
                 message.className = "hint";
 
