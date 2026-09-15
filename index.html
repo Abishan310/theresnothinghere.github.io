@@ -1,0 +1,1032 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Password Cracker</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Arial, sans-serif;
+
+            color: white;
+
+            background:
+                radial-gradient(
+                    circle at 20% 20%,
+                    #18233d 0%,
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at 80% 80%,
+                    #241438 0%,
+                    transparent 35%
+                ),
+                #07080c;
+
+            overflow: hidden;
+        }
+
+
+        body::before {
+            content: "";
+
+            position: fixed;
+            inset: 0;
+
+            background-image:
+                linear-gradient(
+                    rgba(255,255,255,0.025) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,0.025) 1px,
+                    transparent 1px
+                );
+
+            background-size: 40px 40px;
+
+            pointer-events: none;
+        }
+
+
+        .container {
+            width: 460px;
+            max-width: 92%;
+
+            padding: 34px;
+
+            border-radius: 24px;
+
+            background: rgba(20, 22, 30, 0.72);
+
+            backdrop-filter: blur(25px);
+
+            border: 1px solid rgba(255,255,255,0.09);
+
+            box-shadow:
+                0 30px 80px rgba(0,0,0,0.5),
+                inset 0 1px rgba(255,255,255,0.05);
+
+            position: relative;
+
+            z-index: 1;
+        }
+
+
+        .top {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 28px;
+        }
+
+
+        .status {
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            color: #8d93a5;
+
+            font-size: 13px;
+        }
+
+
+        .dot {
+            width: 8px;
+            height: 8px;
+
+            background: #46e88b;
+
+            border-radius: 50%;
+
+            box-shadow:
+                0 0 12px #46e88b;
+        }
+
+
+        .lock {
+            width: 50px;
+            height: 50px;
+
+            border-radius: 15px;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            font-size: 24px;
+
+            background: rgba(255,255,255,0.06);
+
+            border:
+                1px solid rgba(255,255,255,0.08);
+        }
+
+
+        h1 {
+            margin: 0;
+
+            font-size: 30px;
+
+            letter-spacing: -1px;
+        }
+
+
+        .description {
+            color: #8d93a5;
+
+            font-size: 14px;
+
+            margin-top: 8px;
+
+            margin-bottom: 28px;
+        }
+
+
+        input {
+            width: 100%;
+
+            height: 58px;
+
+            padding: 0 18px;
+
+            border-radius: 14px;
+
+            border: 1px solid #292d38;
+
+            background: #0d0f14;
+
+            color: white;
+
+            outline: none;
+
+            font-size: 16px;
+
+            transition: 0.2s;
+        }
+
+
+        input:focus {
+            border-color: #7184ff;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(113,132,255,0.12);
+        }
+
+
+        input::placeholder {
+            color: #555b69;
+        }
+
+
+        input:disabled {
+            opacity: 0.6;
+
+            cursor: not-allowed;
+        }
+
+
+        button {
+            width: 100%;
+
+            height: 58px;
+
+            margin-top: 12px;
+
+            border: none;
+
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #7184ff,
+                    #9b6cff
+                );
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 10px 30px
+                rgba(113,132,255,0.2);
+
+            transition: 0.2s;
+        }
+
+
+        button:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 15px 35px
+                rgba(113,132,255,0.3);
+        }
+
+
+        button:active {
+            transform: translateY(0);
+        }
+
+
+        .attempt-area {
+            margin-top: 25px;
+        }
+
+
+        .attempt-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-bottom: 9px;
+
+            font-size: 12px;
+
+            color: #777d8d;
+        }
+
+
+        .attempt-count {
+            color: white;
+        }
+
+
+        .progress {
+            height: 6px;
+
+            background: #242731;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+
+        .progress-bar {
+            width: 100%;
+
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #7184ff,
+                    #9b6cff
+                );
+
+            border-radius: inherit;
+
+            transition: 0.4s;
+        }
+
+
+        #message {
+            min-height: 24px;
+
+            margin-top: 20px;
+
+            text-align: center;
+
+            font-size: 14px;
+
+            color: #858b9b;
+        }
+
+
+        .success {
+            color: #46e88b !important;
+        }
+
+
+        .error {
+            color: #ff647c !important;
+        }
+
+
+        .hint {
+            color: #ffc857 !important;
+        }
+
+
+        .footer {
+            margin-top: 28px;
+
+            padding-top: 18px;
+
+            border-top:
+                1px solid rgba(255,255,255,0.06);
+
+            display: flex;
+
+            justify-content: space-between;
+
+            color: #555b69;
+
+            font-size: 11px;
+        }
+
+
+        .shake {
+            animation: shake 0.35s;
+        }
+
+
+        @keyframes shake {
+
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-7px);
+            }
+
+            50% {
+                transform: translateX(7px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+
+        }
+
+
+        .unlock {
+            animation: unlock 0.6s forwards;
+        }
+
+
+        @keyframes unlock {
+
+            0% {
+                box-shadow:
+                    0 30px 80px
+                    rgba(0,0,0,0.5);
+            }
+
+            50% {
+                box-shadow:
+                    0 0 50px
+                    rgba(70,232,139,0.25),
+                    0 30px 80px
+                    rgba(0,0,0,0.5);
+            }
+
+            100% {
+                box-shadow:
+                    0 0 20px
+                    rgba(70,232,139,0.1),
+                    0 30px 80px
+                    rgba(0,0,0,0.5);
+            }
+
+        }
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="container" id="game">
+
+
+        <div class="top">
+
+            <div class="status">
+
+                <span class="dot"></span>
+
+                SYSTEM ONLINE
+
+            </div>
+
+
+            <div class="lock" id="lock">
+
+                🔒
+
+            </div>
+
+        </div>
+
+
+        <h1>Password Cracker</h1>
+
+
+        <div class="description">
+
+            Enter the correct password to gain access.
+
+        </div>
+
+
+        <input
+            id="guess"
+            type="text"
+            placeholder="Enter password..."
+            autocomplete="off"
+        >
+
+
+        <button id="guessButton">
+
+            ATTEMPT ACCESS
+
+        </button>
+
+
+        <div class="attempt-area">
+
+
+            <div class="attempt-header">
+
+                <span>ATTEMPTS</span>
+
+                <span
+                    class="attempt-count"
+                    id="attemptText"
+                >
+                    5 / 5
+                </span>
+
+            </div>
+
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    id="progress"
+                ></div>
+
+            </div>
+
+
+        </div>
+
+
+        <div id="message">
+
+            Waiting for authentication...
+
+        </div>
+
+
+        <div class="footer">
+
+            <span>SECURE TERMINAL</span>
+
+            <span>v1.0.0</span>
+
+        </div>
+
+
+    </div>
+
+
+    <script>
+
+
+        // ==========================================
+        // SETTINGS
+        // ==========================================
+
+        const PASSWORD = "banana";
+
+        const MAX_ATTEMPTS = 5;
+
+        const LOCK_SECONDS = 100;
+
+
+        // ==========================================
+        // ELEMENTS
+        // ==========================================
+
+        const game =
+            document.getElementById("game");
+
+        const input =
+            document.getElementById("guess");
+
+        const button =
+            document.getElementById("guessButton");
+
+        const message =
+            document.getElementById("message");
+
+        const progress =
+            document.getElementById("progress");
+
+        const attemptText =
+            document.getElementById("attemptText");
+
+        const lock =
+            document.getElementById("lock");
+
+
+        // ==========================================
+        // GAME VARIABLES
+        // ==========================================
+
+        let attempts = MAX_ATTEMPTS;
+
+        let lockedUntil =
+            Number(
+                localStorage.getItem(
+                    "passwordGameLockedUntil"
+                )
+            ) || 0;
+
+        let timer = null;
+
+
+        // ==========================================
+        // UPDATE ATTEMPTS
+        // ==========================================
+
+        function updateAttempts() {
+
+            attemptText.textContent =
+                attempts + " / " + MAX_ATTEMPTS;
+
+            progress.style.width =
+                (attempts / MAX_ATTEMPTS * 100) + "%";
+
+        }
+
+
+        // ==========================================
+        // START LOCK
+        // ==========================================
+
+        function startLock() {
+
+            lockedUntil =
+                Date.now() +
+                (LOCK_SECONDS * 1000);
+
+
+            localStorage.setItem(
+                "passwordGameLockedUntil",
+                lockedUntil
+            );
+
+
+            input.disabled = true;
+
+            button.disabled = true;
+
+            lock.textContent = "🔒";
+
+
+            updateLock();
+
+
+            timer = setInterval(
+                updateLock,
+                1000
+            );
+
+        }
+
+
+        // ==========================================
+        // UPDATE LOCK
+        // ==========================================
+
+        function updateLock() {
+
+            const remaining =
+                Math.ceil(
+                    (lockedUntil - Date.now()) / 1000
+                );
+
+
+            if (remaining <= 0) {
+
+                unlockGame();
+
+                return;
+
+            }
+
+
+            input.disabled = true;
+
+            button.disabled = true;
+
+
+            input.placeholder =
+                "Wait " +
+                remaining +
+                " seconds...";
+
+
+            message.textContent =
+                "SYSTEM LOCKED — PLEASE WAIT";
+
+            message.className = "error";
+
+        }
+
+
+        // ==========================================
+        // UNLOCK
+        // ==========================================
+
+        function unlockGame() {
+
+            clearInterval(timer);
+
+            timer = null;
+
+            lockedUntil = 0;
+
+            localStorage.removeItem(
+                "passwordGameLockedUntil"
+            );
+
+
+            attempts = MAX_ATTEMPTS;
+
+            input.disabled = false;
+
+            button.disabled = false;
+
+            input.placeholder =
+                "Enter password...";
+
+            input.value = "";
+
+
+            lock.textContent = "🔒";
+
+
+            message.textContent =
+                "Lockout expired — try again.";
+
+            message.className = "success";
+
+
+            updateAttempts();
+
+        }
+
+
+        // ==========================================
+        // PASSWORD CHECK
+        // ==========================================
+
+        function checkPassword() {
+
+
+            // LOCK CHECK
+
+            if (Date.now() < lockedUntil) {
+
+                updateLock();
+
+                return;
+
+            }
+
+
+            const guess =
+                input.value
+                    .trim()
+                    .toLowerCase();
+
+
+            // EMPTY
+
+            if (guess === "") {
+
+                message.textContent =
+                    "Enter a password first.";
+
+                message.className = "error";
+
+                return;
+
+            }
+
+
+            // ======================================
+            // CORRECT
+            // ======================================
+
+            if (guess === PASSWORD) {
+
+                message.textContent =
+                    "✓ PAGE UNLOCKED";
+
+                message.className = "success";
+
+
+                lock.textContent = "🔓";
+
+
+                input.disabled = true;
+
+                button.disabled = true;
+
+
+                input.placeholder =
+                    "Access granted";
+
+
+                attemptText.textContent =
+                    "ACCESS GRANTED";
+
+
+                progress.style.width =
+                    "100%";
+
+
+                game.classList.add("unlock");
+
+
+                return;
+
+            }
+
+
+            // ======================================
+            // WRONG
+            // ======================================
+
+            attempts--;
+
+            updateAttempts();
+
+
+            game.classList.remove("shake");
+
+            void game.offsetWidth;
+
+            game.classList.add("shake");
+
+
+            // ======================================
+            // 5 WRONG ATTEMPTS
+            // ======================================
+
+            if (attempts <= 0) {
+
+                message.textContent =
+                    "✕ ACCESS DENIED —  LOCKED";
+
+                message.className = "error";
+
+                input.value = "";
+
+
+                startLock();
+
+
+                return;
+
+            }
+
+
+            // ======================================
+            // HINTS
+            // ======================================
+
+            if (
+                guess.length <
+                PASSWORD.length
+            ) {
+
+                message.textContent =
+                    "Password is longer than that.";
+
+                message.className = "hint";
+
+            }
+
+            else if (
+                guess.length >
+                PASSWORD.length
+            ) {
+
+                message.textContent =
+                    "Password is shorter than that.";
+
+                message.className = "hint";
+
+            }
+
+            else {
+
+                message.textContent =
+                    "Wrong password. Same length.";
+
+                message.className = "hint";
+
+            }
+
+
+            input.value = "";
+
+            input.focus();
+
+        }
+
+
+        // ==========================================
+        // BUTTON
+        // ==========================================
+
+        button.addEventListener(
+            "click",
+            checkPassword
+        );
+
+
+        // ==========================================
+        // ENTER KEY
+        // ==========================================
+
+        input.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (event.key === "Enter") {
+
+                    checkPassword();
+
+                }
+
+            }
+        );
+
+
+        // ==========================================
+        // DEV CONSOLE
+        // ==========================================
+
+        window.devUnlock = function() {
+
+            clearInterval(timer);
+
+            timer = null;
+
+            lockedUntil = 0;
+
+            localStorage.removeItem(
+                "passwordGameLockedUntil"
+            );
+
+
+            attempts = MAX_ATTEMPTS;
+
+
+            input.disabled = false;
+
+            button.disabled = false;
+
+
+            input.placeholder =
+                "Enter password...";
+
+
+            input.value = "";
+
+
+            lock.textContent = "🔓";
+
+
+            message.textContent =
+                "DEV CONSOLE - SKIPPEDTIMER";
+
+            message.className = "success";
+
+
+            game.classList.remove("shake");
+
+
+            updateAttempts();
+
+
+            console.log(
+                "DEV OVERRIDE: Device unlocked."
+            );
+
+        };
+
+
+        // ==========================================
+        // DEV HELP
+        // ==========================================
+
+        window.devHelp = function() {
+
+            console.log(
+                "PASSWORD CRACKER DEV COMMANDS"
+            );
+
+            console.log(
+                "devUnlock() — unlock the game"
+            );
+
+        };
+
+
+        // ==========================================
+        // INITIAL LOAD
+        // ==========================================
+
+        updateAttempts();
+
+
+        if (lockedUntil > Date.now()) {
+
+            input.disabled = true;
+
+            button.disabled = true;
+
+            timer = setInterval(
+                updateLock,
+                1000
+            );
+
+            updateLock();
+
+        }
+
+        else {
+
+            lockedUntil = 0;
+
+            localStorage.removeItem(
+                "passwordGameLockedUntil"
+            );
+
+        }
+
+
+        // ==========================================
+        // CONSOLE MESSAGE
+        // ==========================================
+
+        console.log(
+            "%cPASSWORD CRACKER",
+            "font-size:18px;font-weight:bold;"
+        );
+
+        console.log(
+            "Type devHelp() for developer commands."
+        );
+
+
+    </script>
+
+
+</body>
+
+</html>
+```
